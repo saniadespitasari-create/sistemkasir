@@ -4,7 +4,7 @@
 // =================================
 
 const SUPABASE_URL = "https://wjwkdfyuafrsxgszrgjt.supabase.co";
-const SUPABASE_KEY = "MASUKKAN_PUBLISHABLE_KEY_KAMU";
+const SUPABASE_KEY = "sb_publishable_MWw-LFmQfa3l8yxFO8aoCA_EBta8402";
 
 const db = supabase.createClient(
     SUPABASE_URL,
