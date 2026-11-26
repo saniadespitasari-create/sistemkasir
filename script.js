@@ -1,8 +1,8 @@
 
 // 1. KONEKSI SUPABASE
 
-const SUPABASE_URL = "MASUKKAN_URL_SUPABASE";
-const SUPABASE_KEY = "MASUKKAN_PUBLISHABLE_KEY";
+const SUPABASE_URL = "https://wjwkdfyuafrsxgszrgjt.supabase.co";
+const SUPABASE_KEY = "sb_publishable_MWw-LFmQfa3l8yxFO8aoCA_EBta8402";
 
 const db = supabase.createClient(
     SUPABASE_URL,
