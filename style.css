@@ -7,40 +7,52 @@
 }
 
 body {
-    background-color: #f0f3f8;
+    background-color: #f1f4f9;
     padding: 30px;
+    color: #26364f;
 }
 
 .container {
-    max-width: 1000px;
+    max-width: 1050px;
     margin: auto;
 }
+
+/* HEADER */
 
 header {
     background-color: #243b67;
     color: white;
-    text-align: center;
     padding: 30px;
+    text-align: center;
     border-radius: 12px;
     margin-bottom: 25px;
 }
 
 header h1 {
     margin-bottom: 10px;
+    font-size: 27px;
 }
 
+header p {
+    color: #dce6f7;
+}
+
+/* CARD */
+
 .card {
-    background: white;
+    background-color: white;
     padding: 25px;
     border-radius: 12px;
     margin-bottom: 25px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    box-shadow: 0 3px 12px rgba(0,0,0,0.06);
 }
 
 h2 {
-    margin-bottom: 20px;
     color: #243b67;
+    margin-bottom: 20px;
 }
+
+/* FORM */
 
 label {
     display: block;
@@ -52,35 +64,61 @@ input {
     width: 100%;
     padding: 12px;
     margin-bottom: 18px;
-    border: 1px solid #ccc;
+    border: 1px solid #ccd4e0;
     border-radius: 7px;
+    font-size: 14px;
+}
+
+input:focus {
+    outline: none;
+    border-color: #243b67;
+}
+
+input:disabled {
+    background-color: #edf0f5;
+}
+
+/* BUTTON */
+
+.button-group {
+    display: flex;
+    gap: 10px;
 }
 
 button {
-    padding: 11px 18px;
     background-color: #243b67;
     color: white;
+    padding: 11px 18px;
     border: none;
     border-radius: 7px;
     cursor: pointer;
-    margin-right: 5px;
+    font-weight: bold;
 }
 
 button:hover {
     opacity: 0.85;
 }
 
-.reset {
-    background-color: #7d8798;
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-reset {
+    background-color: #7b8798;
 }
 
 .btn-edit {
-    background-color: #e6a52b;
+    background-color: #e4a326;
+    padding: 9px 12px;
 }
 
 .btn-delete {
     background-color: #dc4545;
+    padding: 9px 12px;
 }
+
+/* TABLE */
 
 .table-container {
     overflow-x: auto;
@@ -92,41 +130,61 @@ table {
     min-width: 550px;
 }
 
-th, td {
-    padding: 14px;
-    border-bottom: 1px solid #ddd;
-    text-align: left;
-}
-
 th {
     background-color: #243b67;
     color: white;
 }
 
+th, td {
+    padding: 14px;
+    text-align: left;
+    border-bottom: 1px solid #e3e7ed;
+}
+
 tr:hover {
-    background-color: #f4f6fa;
+    background-color: #f5f7fb;
 }
 
 .aksi {
     display: flex;
-    gap: 5px;
+    gap: 7px;
 }
+
+/* PESAN */
 
 #pesan {
     margin-top: 15px;
+    font-size: 14px;
     color: #243b67;
 }
 
+/* FOOTER */
+
+footer {
+    text-align: center;
+    padding: 15px;
+    color: #7b8798;
+    font-size: 13px;
+}
+
+/* RESPONSIVE */
+
 @media (max-width: 600px) {
+
     body {
         padding: 12px;
     }
 
-    .card {
-        padding: 15px;
+    header {
+        padding: 22px 12px;
     }
 
     header h1 {
-        font-size: 21px;
+        font-size: 20px;
     }
+
+    .card {
+        padding: 17px;
+    }
+
 }
