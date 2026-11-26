@@ -1,8 +1,10 @@
 
+// =================================
 // 1. KONEKSI SUPABASE
+// =================================
 
 const SUPABASE_URL = "https://wjwkdfyuafrsxgszrgjt.supabase.co";
-const SUPABASE_KEY = "sb_publishable_MWw-LFmQfa3l8yxFO8aoCA_EBta8402";
+const SUPABASE_KEY = "MASUKKAN_PUBLISHABLE_KEY_KAMU";
 
 const db = supabase.createClient(
     SUPABASE_URL,
@@ -12,33 +14,57 @@ const db = supabase.createClient(
 let idEdit = null;
 
 
-// 2. MENAMPILKAN DATA (SELECT)
+// =================================
+// 2. FUNGSI PESAN
+// =================================
+
+function tampilPesan(teks) {
+    document.getElementById("pesan").textContent = teks;
+}
+
+
+// =================================
+// 3. SELECT - MENAMPILKAN DATA
+// =================================
 
 async function tampilData() {
 
     const tabel = document.getElementById("tabelMakanan");
 
-    tabel.innerHTML = "<tr><td colspan='4'>Memuat data...</td></tr>";
+    tabel.innerHTML = `
+        <tr>
+            <td colspan="4">Memuat data...</td>
+        </tr>
+    `;
 
     const { data, error } = await db
         .from("makanan")
         .select("*")
-        .order("id_makanan");
+        .order("id_makanan", { ascending: true });
 
     if (error) {
-        tabel.innerHTML = "<tr><td colspan='4'>Gagal mengambil data</td></tr>";
-        tampilPesan(error.message);
+        tabel.innerHTML = `
+            <tr>
+                <td colspan="4">Gagal memuat data.</td>
+            </tr>
+        `;
+
+        tampilPesan("Error: " + error.message);
         return;
     }
 
     tabel.innerHTML = "";
 
     if (data.length === 0) {
-        tabel.innerHTML = "<tr><td colspan='4'>Data kosong</td></tr>";
+        tabel.innerHTML = `
+            <tr>
+                <td colspan="4">Belum ada data makanan.</td>
+            </tr>
+        `;
         return;
     }
 
-    data.forEach(item => {
+    data.forEach(function(item) {
 
         const baris = document.createElement("tr");
 
@@ -54,20 +80,26 @@ async function tampilData() {
 
         const kolomAksi = document.createElement("td");
 
-        const btnEdit = document.createElement("button");
-        btnEdit.textContent = "Edit";
-        btnEdit.className = "btn-edit";
-        btnEdit.onclick = () => editData(item);
+        const tombolEdit = document.createElement("button");
+        tombolEdit.textContent = "Edit";
+        tombolEdit.className = "btn-edit";
 
-        const btnHapus = document.createElement("button");
-        btnHapus.textContent = "Delete";
-        btnHapus.className = "btn-delete";
-        btnHapus.onclick = () => hapusData(item.id_makanan);
+        tombolEdit.onclick = function() {
+            editData(item);
+        };
+
+        const tombolHapus = document.createElement("button");
+        tombolHapus.textContent = "Delete";
+        tombolHapus.className = "btn-delete";
+
+        tombolHapus.onclick = function() {
+            hapusData(item.id_makanan);
+        };
 
         const aksi = document.createElement("div");
         aksi.className = "aksi";
-        aksi.append(btnEdit, btnHapus);
 
+        aksi.append(tombolEdit, tombolHapus);
         kolomAksi.appendChild(aksi);
 
         baris.append(
@@ -80,40 +112,58 @@ async function tampilData() {
         tabel.appendChild(baris);
 
     });
+
 }
 
 
-// 3. INSERT DAN UPDATE
+// =================================
+// 4. INSERT - MENAMBAHKAN DATA
+// =================================
 
 document.getElementById("formMakanan")
 .addEventListener("submit", async function(e) {
 
     e.preventDefault();
 
-    const nama = document.getElementById("nama_makanan").value.trim();
-    const harga = Number(document.getElementById("harga").value);
+    const nama = document
+        .getElementById("nama_makanan")
+        .value.trim();
+
+    const harga = Number(
+        document.getElementById("harga").value
+    );
 
     if (!nama || !Number.isFinite(harga) || harga <= 0) {
-        tampilPesan("Masukkan nama dan harga dengan benar!");
+        tampilPesan("Nama dan harga harus diisi dengan benar!");
         return;
     }
 
-    let hasil;
+    const tombol = document.getElementById("btnSimpan");
+
+    tombol.disabled = true;
+
+    let error;
 
     if (idEdit === null) {
 
-        // INSERT
-        hasil = await db
+        // MENAMBAHKAN DATA
+
+        const hasil = await db
             .from("makanan")
-            .insert([{
-                nama_makanan: nama,
-                harga: harga
-            }]);
+            .insert([
+                {
+                    nama_makanan: nama,
+                    harga: harga
+                }
+            ]);
+
+        error = hasil.error;
 
     } else {
 
-        // UPDATE / EDIT
-        hasil = await db
+        // MENGEDIT DATA
+
+        const hasil = await db
             .from("makanan")
             .update({
                 nama_makanan: nama,
@@ -121,18 +171,22 @@ document.getElementById("formMakanan")
             })
             .eq("id_makanan", idEdit);
 
+        error = hasil.error;
+
     }
 
-    if (hasil.error) {
-        tampilPesan(hasil.error.message);
+    tombol.disabled = false;
+
+    if (error) {
+        tampilPesan("Gagal: " + error.message);
         return;
     }
 
-    tampilPesan(
-        idEdit === null
-        ? "Data berhasil ditambahkan!"
-        : "Data berhasil diedit!"
-    );
+    if (idEdit === null) {
+        tampilPesan("Data berhasil ditambahkan!");
+    } else {
+        tampilPesan("Data berhasil diperbarui!");
+    }
 
     resetForm();
     tampilData();
@@ -140,13 +194,16 @@ document.getElementById("formMakanan")
 });
 
 
-// 4. EDIT DATA
+// =================================
+// 5. EDIT - MENGUBAH DATA
+// =================================
 
 function editData(item) {
 
     idEdit = item.id_makanan;
 
-    document.getElementById("id_makanan").value = item.id_makanan;
+    document.getElementById("id_makanan").value =
+        item.id_makanan;
 
     document.getElementById("nama_makanan").value =
         item.nama_makanan;
@@ -157,18 +214,29 @@ function editData(item) {
     document.getElementById("btnSimpan").textContent =
         "Simpan Perubahan";
 
+    tampilPesan("Sedang mengedit data ID " + idEdit);
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
 }
 
 
-// 5. DELETE DATA
+// =================================
+// 6. DELETE - MENGHAPUS DATA
+// =================================
 
 async function hapusData(id) {
 
     const konfirmasi = confirm(
-        "Yakin ingin menghapus data ini?"
+        "Apakah kamu yakin ingin menghapus data ini?"
     );
 
-    if (!konfirmasi) return;
+    if (!konfirmasi) {
+        return;
+    }
 
     const { error } = await db
         .from("makanan")
@@ -176,7 +244,7 @@ async function hapusData(id) {
         .eq("id_makanan", id);
 
     if (error) {
-        tampilPesan(error.message);
+        tampilPesan("Gagal menghapus: " + error.message);
         return;
     }
 
@@ -191,7 +259,9 @@ async function hapusData(id) {
 }
 
 
-// 6. RESET FORM
+// =================================
+// 7. RESET FORM
+// =================================
 
 function resetForm() {
 
@@ -202,18 +272,18 @@ function resetForm() {
     idEdit = null;
 
     document.getElementById("btnSimpan").textContent =
-        "Tambah Data";
+        "+ Tambah Data";
+
+    tampilPesan("");
 
 }
 
-
-// 7. MENAMPILKAN PESAN
-
-function tampilPesan(teks) {
-    document.getElementById("pesan").textContent = teks;
-}
+document.getElementById("btnReset")
+.addEventListener("click", resetForm);
 
 
+// =================================
 // 8. MENJALANKAN PROGRAM
+// =================================
 
 tampilData();
